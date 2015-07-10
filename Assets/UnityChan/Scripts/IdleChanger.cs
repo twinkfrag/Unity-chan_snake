@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+#pragma warning disable CS0618 // 型またはメンバーが古い形式です
 
 namespace UnityChan
 {

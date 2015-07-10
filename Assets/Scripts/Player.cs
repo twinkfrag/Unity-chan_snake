@@ -18,15 +18,8 @@ namespace Assets.Scripts
 
 		public GameObject PlayerPrefab
 		{
-			get
-			{
-				return playerPrefab;
-			}
-
-			set
-			{
-				playerPrefab = value;
-			}
+			get { return playerPrefab; }
+			set { playerPrefab = value; }
 		}
 
 		public IObservable<Posture> PostureAsObservable { get; private set; }
@@ -45,21 +38,29 @@ namespace Assets.Scripts
 			this.UpdateAsObservable()
 				.Select(_ => new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")))
 				.Where(v => v.magnitude > 0.1)
-				.Subscribe(Move)
+				.Subscribe(v =>
+				{
+					GetComponent<Rigidbody>().velocity = v;
+					this.transform.rotation = Quaternion.LookRotation(v);
+				}, Debug.LogException)
 				.AddTo(this);
-		}
 
-		public void Move(Vector3 direction)
-		{
-			try
+			// trigger
+			var trigger = this.GetComponent<ObservableTriggerTrigger>();
+			if (trigger == null)
 			{
-				GetComponent<Rigidbody>().velocity = direction;
-				this.transform.rotation = Quaternion.LookRotation(direction);
+				Debug.LogError("must set ObservableTriggerTrigger to Player");
+				return;
 			}
-			catch (NullReferenceException)
-			{
-				Debug.LogWarning("Player has no Rigidbody");
-			}
+
+			trigger.OnTriggerEnterAsObservable()
+				   .Where(c => c.gameObject.name.Contains("Food"))
+				   .Subscribe(c =>
+				   {
+					   c.GetComponent<Food>().Next();
+					   Destroy(c.gameObject);
+				   })
+				   .AddTo(this);
 		}
 	}
 }

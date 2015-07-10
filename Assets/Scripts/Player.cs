@@ -26,13 +26,16 @@ namespace Assets.Scripts
 
 		void Start()
 		{
+			// GameOver時に解除するObservable
+			var playingObservables = new CompositeDisposable().AddTo(this);
+
 			// PostureAsObservableの生成
 			PostureAsObservable = this.UpdateAsObservable()
 				.Select(_ => new Posture(this.transform));
 
 			// PostureAsObservableのログ
 			PostureAsObservable.Subscribe(p => Debug.Log(p))
-				.AddTo(this);
+				.AddTo(playingObservables);
 
 			// 移動入力
 			this.UpdateAsObservable()
@@ -43,24 +46,30 @@ namespace Assets.Scripts
 					GetComponent<Rigidbody>().velocity = v;
 					this.transform.rotation = Quaternion.LookRotation(v);
 				}, Debug.LogException)
-				.AddTo(this);
+				.AddTo(playingObservables);
 
 			// trigger
-			var trigger = this.GetComponent<ObservableTriggerTrigger>();
-			if (trigger == null)
-			{
-				Debug.LogError("must set ObservableTriggerTrigger to Player");
-				return;
-			}
+			var trigger = this.GetComponent<ObservableTriggerTrigger>().OnTriggerEnterAsObservable();
 
-			trigger.OnTriggerEnterAsObservable()
-				   .Where(c => c.gameObject.name.Contains("Food"))
+			trigger.Where(c => c.gameObject.name.Contains("Food"))
 				   .Subscribe(c =>
 				   {
 					   c.GetComponent<Food>().Next();
 					   Destroy(c.gameObject);
 				   })
-				   .AddTo(this);
+				   .AddTo(playingObservables);
+
+			trigger.Where(c => c.name.Contains("Wall") || c.name.Contains("Player"))
+			       .Subscribe(_ =>
+			       {
+				       Debug.Log("Game Over");
+				       Time.timeScale = 0;
+				       playingObservables.Dispose();
+			       })
+			       .AddTo(this);
+
+			var tail = Instantiate(PlayerPrefab, new Vector3(4.5f, transform.position.y, 4.5f), transform.rotation) as GameObject;
+			tail.GetComponent<Player>().enabled = false;
 		}
 	}
 }

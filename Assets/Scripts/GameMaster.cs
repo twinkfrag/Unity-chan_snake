@@ -29,7 +29,9 @@ namespace Assets.Scripts
 
 			var scoreText = GetComponentInChildren<UnityEngine.UI.Text>();
 			this.UpdateAsObservable()
-				.Subscribe(_ => scoreText.text = string.Format("Score: {0}", Score))
+				.Select(_ => Score)
+				.DistinctUntilChanged()
+				.Subscribe(s => scoreText.text = string.Format("Score: {0:#,0}", s))
 				.AddTo(this);
 
 		}

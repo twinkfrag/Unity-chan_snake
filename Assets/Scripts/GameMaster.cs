@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
+using UniRx;
+using UniRx.Triggers;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable ArrangeThisQualifier
+// ReSharper disable UseStringInterpolation
 
 namespace Assets.Scripts
 {
 	public class GameMaster : MonoBehaviour
 	{
+		public static int Score { get; set; }
+
 		[SerializeField]
 		private GameObject localCamera;
 
@@ -21,7 +24,14 @@ namespace Assets.Scripts
 
 		void Start()
 		{
+			Score = 0;
 			Instantiate(InheritCamera ?? LocalCamera).transform.parent = this.transform;
+
+			var scoreText = GetComponentInChildren<UnityEngine.UI.Text>();
+			this.UpdateAsObservable()
+				.Subscribe(_ => scoreText.text = string.Format("Score: {0}", Score))
+				.AddTo(this);
+
 		}
 	}
 }

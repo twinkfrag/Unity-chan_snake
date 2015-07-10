@@ -34,7 +34,8 @@ namespace Assets.Scripts
 				.Select(_ => new Posture(this.transform));
 
 			// PostureAsObservableのログ
-			PostureAsObservable.Subscribe(p => Debug.Log(p))
+			PostureAsObservable
+				.Subscribe(p => Debug.Log(p))
 				.AddTo(playingObservables);
 
 			// 移動入力
@@ -51,24 +52,27 @@ namespace Assets.Scripts
 			// trigger
 			var trigger = this.GetComponent<ObservableTriggerTrigger>().OnTriggerEnterAsObservable();
 
-			trigger.Where(c => c.gameObject.name.Contains("Food"))
-				   .Subscribe(c =>
-				   {
-					   c.GetComponent<Food>().Next();
-					   Destroy(c.gameObject);
-				   })
-				   .AddTo(playingObservables);
+			trigger
+				.Where(c => c.name.Contains("Food"))
+				.Subscribe(c =>
+				{
+					GameMaster.Score += 1000;
+					c.GetComponent<Food>().Next();
+					Destroy(c.gameObject);
+				})
+				.AddTo(playingObservables);
 
-			trigger.Where(c => c.name.Contains("Wall") || c.name.Contains("Player"))
-			       .Subscribe(_ =>
-			       {
-				       Debug.Log("Game Over");
-				       Time.timeScale = 0;
-				       playingObservables.Dispose();
-			       })
-			       .AddTo(this);
+			trigger
+				.Where(c => c.name.Contains("Wall") || c.name.Contains("Player"))
+				.Subscribe(_ =>
+				{
+					Debug.Log("Game Over");
+					Time.timeScale = 0;
+					playingObservables.Dispose();
+				})
+				.AddTo(this);
 
-			var tail = Instantiate(PlayerPrefab, new Vector3(4.5f, transform.position.y, 4.5f), transform.rotation) as GameObject;
+			var tail = (GameObject)Instantiate(PlayerPrefab, new Vector3(4.5f, transform.position.y, 4.5f), transform.rotation);
 			tail.GetComponent<Player>().enabled = false;
 		}
 	}

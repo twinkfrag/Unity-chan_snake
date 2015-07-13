@@ -23,7 +23,7 @@ namespace Assets.Scripts.Models
 
 		public Posture(Transform t) : this(t.position, t.rotation) { }
 
-		public void ForTransform(ref Transform t)
+		public void ForTransform(Transform t)
 		{
 			t.position = Position;
 			t.rotation = Rotation;

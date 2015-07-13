@@ -1,10 +1,6 @@
 ﻿using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
-using Unity.Linq;
-// ReSharper disable UnusedMember.Local
-// ReSharper disable ArrangeThisQualifier
-// ReSharper disable UseStringInterpolation
 
 namespace Assets.Scripts
 {

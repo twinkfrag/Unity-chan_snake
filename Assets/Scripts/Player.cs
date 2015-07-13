@@ -6,9 +6,6 @@ using UniRx;
 using UniRx.Triggers;
 using Unity.Linq;
 using Assets.Scripts.Models;
-// ReSharper disable ConvertPropertyToExpressionBody
-// ReSharper disable FunctionRecursiveOnAllPaths
-// ReSharper disable ArrangeThisQualifier
 
 namespace Assets.Scripts
 {
@@ -90,12 +87,12 @@ namespace Assets.Scripts
 
 		IEnumerator HistoryToTail(IList<IList<Posture>> history)
 		{
-
 			var zip = gameObject
 				.AfterSelf()
-				.ToObservable()
-				.Zip(history.Reverse().ToObservable(), (t, h) => new { tail = t, history = h })
-				.Subscribe(t => StartCoroutine(BufferToTail(t.tail.transform, t.history)));
+				.Zip(history.Reverse(), (t, h) => new { tail = t, history = h });
+				//.ToObservable()
+				//.Zip(history.Reverse().ToObservable(), (t, h) => new { tail = t, history = h })
+				//.Subscribe(t => StartCoroutine(BufferToTail(t.tail.transform, t.history)));
 			yield return null;
 		}
 

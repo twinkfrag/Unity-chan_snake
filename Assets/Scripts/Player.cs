@@ -12,7 +12,7 @@ namespace Assets.Scripts
 	class Player : MonoBehaviour
 	{
 		[SerializeField]
-		private GameObject tailPrefab;
+		private GameObject tailPrefab = null;
 
 		public GameObject TailPrefab
 		{
@@ -31,17 +31,17 @@ namespace Assets.Scripts
 			// PostureAsObservableの生成
 			var postureAsObservable = playingAsObservable
 				.Select(_ => new Posture(this.transform))
-				.Buffer(30);
+				.Buffer(40);
 
 			postureAsObservable
 				.Subscribe(postureHistory.Add)
 				.AddTo(playingObservables);
 
 			// PostureAsObservableのログ
-			postureAsObservable
-				.Select(x => x.First())
-				.Subscribe(p => Debug.Log(p))
-				.AddTo(playingObservables);
+			//postureAsObservable
+			//	.Select(x => x.First())
+			//	.Subscribe(p => Debug.Log(p))
+			//	.AddTo(playingObservables);
 
 			// 移動入力
 			playingAsObservable
@@ -57,7 +57,7 @@ namespace Assets.Scripts
 			// trigger
 			var trigger = this.OnTriggerEnterAsObservable();
 
-
+			// アイテム判定
 			trigger
 				.Where(c => c.name.Contains("Food"))
 				.Subscribe(c =>
@@ -70,10 +70,14 @@ namespace Assets.Scripts
 						.Skip(postureHistory.Count - 2)
 						.First()
 						.First()
-						.ForTransform(gameObject.AddAfterSelf(TailPrefab).transform);
+						.ForTransform(gameObject.Parent().Add(TailPrefab).transform);
 				})
 				.AddTo(playingObservables);
 
+			gameObject.AddAfterSelf(TailPrefab).name = "Neck";
+			StartCoroutine(HistoryToTail(postureHistory));
+
+			// GameOver判定
 			trigger
 				.Where(c => c.name.Contains("Wall") || c.name.Contains("Tail"))
 				.Select(_ => Unit.Default)
@@ -87,13 +91,23 @@ namespace Assets.Scripts
 
 		IEnumerator HistoryToTail(IList<IList<Posture>> history)
 		{
+			yield return null;
 			var zip = gameObject
 				.AfterSelf()
-				.Zip(history.Reverse(), (t, h) => new { tail = t, history = h });
-				//.ToObservable()
-				//.Zip(history.Reverse().ToObservable(), (t, h) => new { tail = t, history = h })
-				//.Subscribe(t => StartCoroutine(BufferToTail(t.tail.transform, t.history)));
-			yield return null;
+				.Zip(history.Reverse(), (tail, buf) => new { tail, buf })
+				.Select(t => Observable.FromCoroutine(() => BufferToTail(t.tail.transform, t.buf)))
+				.WhenAll()
+				.Subscribe(
+					onNext: _ =>
+					{
+					},
+					onCompleted: () =>
+					{
+						StartCoroutine(HistoryToTail(postureHistory));
+					})
+				.AddTo(GameMaster.Current.GameSubscriber)
+				;
+			Debug.Log("yield return end");
 		}
 
 		static IEnumerator BufferToTail(Transform t, IList<Posture> buf)

@@ -22,5 +22,11 @@ namespace Assets.Scripts
 				}
 			}
 		}
+
+		public static IEnumerable<TResult> Zip<TSource, TResult>(
+			this IEnumerable<IEnumerable<TSource>>  source, Func<TSource, TResult> selector)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

@@ -12,6 +12,7 @@ GameObject:
   - 124: {fileID: 12489408}
   - 92: {fileID: 9255006}
   - 81: {fileID: 8122626}
+  - 114: {fileID: 11450096}
   m_Layer: 0
   m_Name: UnityChanCamera
   m_TagString: Untagged
@@ -78,6 +79,17 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 167618}
   m_Enabled: 1
+--- !u!114 &11450096
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 167618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41b7f91abbc768348acae307400c3075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!124 &12489408
 Behaviour:
   m_ObjectHideFlags: 1

@@ -131,7 +131,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49fa9a3447afa3440809f77278365ee3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localCamera: {fileID: 155498, guid: 65dbb469dcee6504491273b9811b3e1c, type: 2}
+  godCamera: {fileID: 155498, guid: 65dbb469dcee6504491273b9811b3e1c, type: 2}
+  unityChanCamera: {fileID: 167618, guid: 9a239bb4625c2ee4aabb591a8a6230e8, type: 2}
 --- !u!114 &11495352
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -268,6 +269,14 @@ Prefab:
       propertyPath: localCamera
       value: 
       objectReference: {fileID: 155498, guid: 65dbb469dcee6504491273b9811b3e1c, type: 2}
+    - target: {fileID: 0}
+      propertyPath: godCamera
+      value: 
+      objectReference: {fileID: 155498, guid: 65dbb469dcee6504491273b9811b3e1c, type: 2}
+    - target: {fileID: 0}
+      propertyPath: unityChanCamera
+      value: 
+      objectReference: {fileID: 167618, guid: 9a239bb4625c2ee4aabb591a8a6230e8, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 104050}

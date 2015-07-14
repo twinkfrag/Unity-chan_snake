@@ -13,15 +13,22 @@ namespace Assets.Scripts
 		public ObservableUpdateTrigger GameSubscriber { get; private set; }
 
 		[SerializeField]
-		private GameObject localCamera;
+		private GameObject godCamera;
 
-		public GameObject LocalCamera
+		public GameObject GodCamera
 		{
-			get { return localCamera; }
-			set { localCamera = value; }
+			get { return godCamera; }
 		}
 
-		public static GameObject InheritCamera { get; set; }
+		[SerializeField]
+		private GameObject unityChanCamera;
+
+		public GameObject UnityChanCamera
+		{
+			get { return unityChanCamera; }
+		}
+
+		public static Mode GameMode { get; set; }
 
 		public GameMaster()
 		{
@@ -36,7 +43,16 @@ namespace Assets.Scripts
 		void Start()
 		{
 			Score = 0;
-			Instantiate(InheritCamera ?? LocalCamera).transform.parent = this.transform;
+
+			switch (GameMode)
+			{
+				case Mode.UnityChan:
+					Instantiate(UnityChanCamera).transform.parent = Player.Current.transform;
+					break;
+				default:
+					Instantiate(GodCamera).transform.parent = this.transform;
+					break;
+			}
 
 			var scoreText = GetComponentInChildren<UnityEngine.UI.Text>();
 			GameSubscriber.UpdateAsObservable()
@@ -50,6 +66,11 @@ namespace Assets.Scripts
 						Debug.Log("Game Over Complete");
 					})
 				.AddTo(this);
+		}
+
+		public enum Mode
+		{
+			God, UnityChan
 		}
 	}
 }

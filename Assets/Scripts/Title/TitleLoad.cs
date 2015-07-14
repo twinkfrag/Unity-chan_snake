@@ -6,13 +6,17 @@ namespace Assets.Scripts.Title
 {
 	public class TitleLoad : MonoBehaviour
 	{
-		[SerializeField]
-		private GameObject godCamera;
-
 		public void LoadGodEye()
 		{
 			Debug.Log("Load God Eye");
-			GameMaster.InheritCamera = godCamera;
+			GameMaster.GameMode = GameMaster.Mode.God;
+			Application.LoadLevel("Unity-chan_snake_GodEye");
+		}
+
+		public void LoadUnityChanEye()
+		{
+			Debug.Log("Load Unity-chan Eye");
+			GameMaster.GameMode = GameMaster.Mode.UnityChan;
 			Application.LoadLevel("Unity-chan_snake_GodEye");
 		}
 	}

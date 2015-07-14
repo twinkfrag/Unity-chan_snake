@@ -12,47 +12,38 @@ namespace Assets.Scripts
 	class Player : MonoBehaviour
 	{
 		[SerializeField]
-		private GameObject tailPrefab = null;
+		private GameObject tailPrefab;
 
 		public GameObject TailPrefab
 		{
 			get { return tailPrefab; }
 		}
 
+		public static Player Current { get; private set; }
+
+		private Coroutine currentTailCoroutine;
+
 		private readonly List<IList<Posture>> postureHistory = new List<IList<Posture>>();
+
+		public Player()
+		{
+			Current = this;
+		}
 
 		void Start()
 		{
-			var playingAsObservable = GameMaster.Current.GameSubscriber.UpdateAsObservable();
+			// ゲーム進行中のみ存在するオブジェクト
+			var gameSubscriber = GameMaster.Current.GameSubscriber;
+			var updateAsObservable = gameSubscriber.UpdateAsObservable();
 
-			// GameOver時に解除するObservable
-			var playingObservables = new CompositeDisposable().AddTo(this);
-
-			// PostureAsObservableの生成
-			var postureAsObservable = playingAsObservable
+			// PostureHistory(位置のログ)の生成
+			updateAsObservable
 				.Select(_ => new Posture(this.transform))
-				.Buffer(40);
-
-			postureAsObservable
+				.Buffer(40)
+				// ついでにスコアを加算
+				.Do(_ => GameMaster.Score += 1)
 				.Subscribe(postureHistory.Add)
-				.AddTo(playingObservables);
-
-			// PostureAsObservableのログ
-			//postureAsObservable
-			//	.Select(x => x.First())
-			//	.Subscribe(p => Debug.Log(p))
-			//	.AddTo(playingObservables);
-
-			// 移動入力
-			playingAsObservable
-				.Select(_ => new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")))
-				.Where(v => v.magnitude > 0.1)
-				.Subscribe(direction =>
-				{
-					GetComponent<Rigidbody>().velocity = direction;
-					this.transform.rotation = Quaternion.LookRotation(direction);
-				}, Debug.LogException)
-				.AddTo(playingObservables);
+				.AddTo(gameSubscriber);
 
 			// trigger
 			var trigger = this.OnTriggerEnterAsObservable();
@@ -66,16 +57,17 @@ namespace Assets.Scripts
 					c.GetComponent<Food>().Next();
 					c.gameObject.Destroy();
 
-					postureHistory
-						.Skip(postureHistory.Count - 2)
-						.First()
-						.First()
-						.ForTransform(gameObject.Parent().Add(TailPrefab).transform);
+					StopCoroutine(currentTailCoroutine);
+					gameObject.Parent().Add(TailPrefab);
+					currentTailCoroutine = StartCoroutine(HistoryToTail(postureHistory));
 				})
-				.AddTo(playingObservables);
+				.AddTo(gameSubscriber);
 
+			// 一つ目の追尾オブジェクト
 			gameObject.AddAfterSelf(TailPrefab).name = "Neck";
-			StartCoroutine(HistoryToTail(postureHistory));
+
+			// 追尾開始
+			currentTailCoroutine = StartCoroutine(HistoryToTail(postureHistory));
 
 			// GameOver判定
 			trigger
@@ -83,8 +75,7 @@ namespace Assets.Scripts
 				.Select(_ => Unit.Default)
 				.Subscribe(_ =>
 				{
-					playingObservables.Dispose();
-					GameMaster.Current.GameSubscriber.gameObject.Destroy();
+					gameSubscriber.gameObject.Destroy();
 				})
 				.AddTo(this);
 		}
@@ -92,7 +83,7 @@ namespace Assets.Scripts
 		IEnumerator HistoryToTail(IList<IList<Posture>> history)
 		{
 			yield return null;
-			var zip = gameObject
+			gameObject
 				.AfterSelf()
 				.Zip(history.Reverse(), (tail, buf) => new { tail, buf })
 				.Select(t => Observable.FromCoroutine(() => BufferToTail(t.tail.transform, t.buf)))
@@ -103,7 +94,7 @@ namespace Assets.Scripts
 					},
 					onCompleted: () =>
 					{
-						StartCoroutine(HistoryToTail(postureHistory));
+						currentTailCoroutine = StartCoroutine(HistoryToTail(postureHistory));
 					})
 				.AddTo(GameMaster.Current.GameSubscriber)
 				;

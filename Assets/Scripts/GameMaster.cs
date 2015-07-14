@@ -31,7 +31,6 @@ namespace Assets.Scripts
 		void Awake()
 		{
 			GameSubscriber = GetComponentInChildren<ObservableUpdateTrigger>();
-			
 		}
 
 		void Start()

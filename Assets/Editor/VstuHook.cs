@@ -30,7 +30,7 @@ namespace Assets.Editor
 			document.Root
 			        .Descendants()
 			        .First(x => x.Name.LocalName == "PropertyGroup")
-			        .Add(new XElement(ns + "NoWarn", "CSE0001"));
+			        .Add(new XElement(ns + "NoWarn", "649,CSE0001"));
 
 			return document.Declaration + Environment.NewLine + document.Root;
 		}

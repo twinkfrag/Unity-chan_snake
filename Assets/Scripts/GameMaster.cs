@@ -47,7 +47,7 @@ namespace Assets.Scripts
 			switch (GameMode)
 			{
 				case Mode.UnityChan:
-					Instantiate(UnityChanCamera).transform.parent = Player.Current.transform;
+					Instantiate(UnityChanCamera).transform.parent = Player.CurrentRigid.transform;
 					break;
 				default:
 					Instantiate(GodCamera).transform.parent = this.transform;

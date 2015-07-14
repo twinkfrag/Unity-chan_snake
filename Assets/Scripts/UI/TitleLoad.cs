@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
 
-namespace Assets.Scripts.Title
+namespace Assets.Scripts.UI
 {
 	public class TitleLoad : MonoBehaviour
 	{
@@ -10,14 +8,14 @@ namespace Assets.Scripts.Title
 		{
 			Debug.Log("Load God Eye");
 			GameMaster.GameMode = GameMaster.Mode.God;
-			Application.LoadLevel("Unity-chan_snake_GodEye");
+			Application.LoadLevel("Unity-chan_snake");
 		}
 
 		public void LoadUnityChanEye()
 		{
 			Debug.Log("Load Unity-chan Eye");
 			GameMaster.GameMode = GameMaster.Mode.UnityChan;
-			Application.LoadLevel("Unity-chan_snake_GodEye");
+			Application.LoadLevel("Unity-chan_snake");
 		}
 	}
  

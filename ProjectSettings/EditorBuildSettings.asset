@@ -10,4 +10,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Secnes/Unity-chan_snake_Title.unity
   - enabled: 1
-    path: Assets/Secnes/Unity-chan_snake_GodEye.unity
+    path: Assets/Secnes/Unity-chan_snake.unity
+  - enabled: 1
+    path: Assets/Secnes/Unity-chan_snake_GameOver.unity

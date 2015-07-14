@@ -19,15 +19,15 @@ namespace Assets.Scripts
 			get { return tailPrefab; }
 		}
 
-		public static Player Current { get; private set; }
+		public static Rigidbody CurrentRigid { get; private set; }
 
 		private Coroutine currentTailCoroutine;
 
 		private readonly List<IList<Posture>> postureHistory = new List<IList<Posture>>();
 
-		public Player()
+		void Awake()
 		{
-			Current = this;
+			CurrentRigid = GetComponent<Rigidbody>();
 		}
 
 		void Start()
@@ -76,6 +76,7 @@ namespace Assets.Scripts
 				.Subscribe(_ =>
 				{
 					gameSubscriber.gameObject.Destroy();
+					Application.LoadLevelAdditive("Unity-chan_snake_GameOver");
 				})
 				.AddTo(this);
 		}

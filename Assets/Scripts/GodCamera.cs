@@ -7,7 +7,7 @@ namespace Assets.Scripts
 	{
 		void Start()
 		{
-			var player = Player.Current;
+			var playerRigid = Player.CurrentRigid;
 
 			// ゲーム進行中のみ存在するオブジェクト
 			var gameSubscriber = GameMaster.Current.GameSubscriber;
@@ -19,8 +19,8 @@ namespace Assets.Scripts
 				.Where(v => v.magnitude > 0.1)
 				.Subscribe(direction =>
 				{
-					player.GetComponent<Rigidbody>().velocity = direction;
-					player.transform.rotation = Quaternion.LookRotation(direction);
+					playerRigid.velocity = direction;
+					playerRigid.transform.rotation = Quaternion.LookRotation(direction);
 				}, Debug.LogException)
 				.AddTo(gameSubscriber);
 

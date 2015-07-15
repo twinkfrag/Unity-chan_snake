@@ -40,7 +40,7 @@ namespace Assets.Scripts
 			var updateAsObservable = master.UpdateAsObservable();
 
 			// PostureHistory(位置のログ)の生成
-			updateAsObservable
+			this.FixedUpdateAsObservable()
 				.Select(_ => new Posture(this.transform))
 				.Buffer(40)
 				// ついでにスコアを加算
@@ -87,7 +87,7 @@ namespace Assets.Scripts
 
 		IEnumerator HistoryToTail(IList<IList<Posture>> history)
 		{
-			yield return null;
+			yield return new WaitForFixedUpdate();
 			gameObject
 				.AfterSelf()
 				.Zip(history.Reverse(), (tail, buf) => new { tail, buf })
@@ -111,7 +111,7 @@ namespace Assets.Scripts
 			foreach (var pos in buf)
 			{
 				pos.ForTransform(t);
-				yield return null;
+				yield return new WaitForFixedUpdate();
 			}
 		}
 	}

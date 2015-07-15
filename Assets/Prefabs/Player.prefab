@@ -4115,6 +4115,10 @@ Prefab:
       propertyPath: tailPrefab
       value: 
       objectReference: {fileID: 155046, guid: 2bf8aaac0fdd9fb459eef5b206ec7063, type: 2}
+    - target: {fileID: 0}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 182544}

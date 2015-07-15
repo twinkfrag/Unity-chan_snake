@@ -75,6 +75,7 @@ namespace Assets.Scripts
 				.Select(_ => Unit.Default)
 				.Subscribe(_ =>
 				{
+					CurrentRigid.velocity = Vector3.zero;
 					gameSubscriber.gameObject.Destroy();
 					Application.LoadLevelAdditive("Unity-chan_snake_GameOver");
 				})

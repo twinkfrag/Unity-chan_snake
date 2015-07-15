@@ -1,5 +1,4 @@
-﻿using UniRx;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Scripts.UI
 {
@@ -7,11 +6,7 @@ namespace Assets.Scripts.UI
 	{
 		public void BackToTitle()
 		{
-			//Application.LoadLevel("Unity-chan_snake_Title");
-
-			Observable
-				.Return("申し訳ありません。\nブラウザの更新ボタンを押してください。")
-				.SubscribeToText(GetComponentInChildren<UnityEngine.UI.Text>());
+			Application.LoadLevel("Unity-chan_snake_Title");
 		}
 	}
 }

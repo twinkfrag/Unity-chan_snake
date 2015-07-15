@@ -54,17 +54,11 @@ namespace Assets.Scripts
 					break;
 			}
 
-			var scoreText = GetComponentInChildren<UnityEngine.UI.Text>();
 			GameSubscriber.UpdateAsObservable()
 				.Select(_ => Score)
 				.DistinctUntilChanged()
-				.Subscribe(
-					s => scoreText.text = string.Format("Score: {0:#,0}", s),
-					() =>
-					{
-						Time.timeScale = 0f;
-						Debug.Log("Game Over Complete");
-					})
+				.SubscribeToText(GetComponentInChildren<UnityEngine.UI.Text>(),
+					i => string.Format("Score: {0:#,0}", i))
 				.AddTo(this);
 		}
 

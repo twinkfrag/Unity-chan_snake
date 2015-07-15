@@ -1,4 +1,5 @@
 ﻿using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -10,8 +11,8 @@ namespace Assets.Scripts
 			var playerRigid = Player.CurrentRigid;
 
 			// ゲーム進行中のみ存在するオブジェクト
-			var gameSubscriber = GameMaster.Current.GameSubscriber;
-			var updateAsObservable = gameSubscriber.UpdateAsObservable();
+			var master = GameMaster.Current;
+			var updateAsObservable = master.UpdateAsObservable();
 
 			// 移動入力
 			updateAsObservable
@@ -21,8 +22,8 @@ namespace Assets.Scripts
 				{
 					playerRigid.velocity = direction;
 					playerRigid.transform.rotation = Quaternion.LookRotation(direction);
-				}, Debug.LogException)
-				.AddTo(gameSubscriber);
+				})
+				.AddTo(master);
 
 		}
 	}

@@ -32,9 +32,12 @@ namespace Assets.Scripts
 
 		void Start()
 		{
+			// 自動で移動開始
+			CurrentRigid.velocity = Vector3.forward;
+
 			// ゲーム進行中のみ存在するオブジェクト
-			var gameSubscriber = GameMaster.Current.GameSubscriber;
-			var updateAsObservable = gameSubscriber.UpdateAsObservable();
+			var master = GameMaster.Current;
+			var updateAsObservable = master.UpdateAsObservable();
 
 			// PostureHistory(位置のログ)の生成
 			updateAsObservable
@@ -43,7 +46,7 @@ namespace Assets.Scripts
 				// ついでにスコアを加算
 				.Do(_ => GameMaster.Score += 1)
 				.Subscribe(postureHistory.Add)
-				.AddTo(gameSubscriber);
+				.AddTo(master);
 
 			// trigger
 			var trigger = this.OnTriggerEnterAsObservable();
@@ -61,7 +64,7 @@ namespace Assets.Scripts
 					gameObject.Parent().Add(TailPrefab);
 					currentTailCoroutine = StartCoroutine(HistoryToTail(postureHistory));
 				})
-				.AddTo(gameSubscriber);
+				.AddTo(master);
 
 			// 一つ目の追尾オブジェクト
 			gameObject.AddAfterSelf(TailPrefab).name = "Neck";
@@ -76,7 +79,7 @@ namespace Assets.Scripts
 				.Subscribe(_ =>
 				{
 					CurrentRigid.velocity = Vector3.zero;
-					gameSubscriber.gameObject.Destroy();
+					master.gameObject.Destroy();
 					Application.LoadLevelAdditive("Unity-chan_snake_GameOver");
 				})
 				.AddTo(this);
@@ -98,7 +101,7 @@ namespace Assets.Scripts
 					{
 						currentTailCoroutine = StartCoroutine(HistoryToTail(postureHistory));
 					})
-				.AddTo(GameMaster.Current.GameSubscriber)
+				.AddTo(GameMaster.Current)
 				;
 			Debug.Log("yield return end");
 		}

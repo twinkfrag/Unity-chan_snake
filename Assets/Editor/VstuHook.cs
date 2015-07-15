@@ -27,6 +27,14 @@ namespace Assets.Editor
 					.Where(x => (string)x.Attribute("Include") == "Boo.Lang")
 					.Remove();
 
+			var xmllinq = new XElement(ns + "Reference");
+			xmllinq.SetAttributeValue("Include", "System.XML.Linq");
+			document.Root
+			        .Descendants()
+			        .Where(x => x.Name.LocalName == "Reference")
+			        .First(x => (string)x.Attribute("Include") == "System.XML")
+			        .AddAfterSelf(xmllinq);
+
 			document.Root
 			        .Descendants()
 			        .First(x => x.Name.LocalName == "PropertyGroup")

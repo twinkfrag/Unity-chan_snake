@@ -1,5 +1,5 @@
-﻿using System;
-using UniRx;
+﻿using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -10,12 +10,9 @@ namespace Assets.Scripts
 		{
 			var playerRigid = Player.CurrentRigid;
 
-			// 自動移動しないと動けない
-			playerRigid.velocity = Vector3.forward;
-
 			// ゲーム進行中のみ存在するオブジェクト
-			var gameSubscriber = GameMaster.Current.GameSubscriber;
-			var updateAsObservable = gameSubscriber.UpdateAsObservable();
+			var master = GameMaster.Current;
+			var updateAsObservable = master.UpdateAsObservable();
 
 			// 移動入力
 			updateAsObservable
@@ -23,15 +20,15 @@ namespace Assets.Scripts
 				// 連続入力の防止
 				.DistinctUntilChanged()
 				.Where(v => v.magnitude > 0.1)
-				//.ThrottleFirstFrame(5)
+				.ThrottleFirstFrame(5)
 				// 現在の方向に対する変化を外積で作る
 				.Select(v => Vector3.Cross(v, playerRigid.velocity))
 				.Subscribe(direction =>
 				{
 					playerRigid.velocity = direction;
 					playerRigid.transform.rotation = Quaternion.LookRotation(direction);
-				}, Debug.LogException)
-				.AddTo(gameSubscriber);
+				})
+				.AddTo(master);
 
 		}
 	}

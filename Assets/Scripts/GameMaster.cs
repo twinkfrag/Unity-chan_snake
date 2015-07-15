@@ -10,8 +10,6 @@ namespace Assets.Scripts
 
 		public static GameMaster Current { get; private set; }
 
-		public ObservableUpdateTrigger GameSubscriber { get; private set; }
-
 		[SerializeField]
 		private GameObject godCamera;
 
@@ -35,11 +33,6 @@ namespace Assets.Scripts
 			Current = this;
 		}
 
-		void Awake()
-		{
-			GameSubscriber = GetComponentInChildren<ObservableUpdateTrigger>();
-		}
-
 		void Start()
 		{
 			Score = 0;
@@ -54,9 +47,7 @@ namespace Assets.Scripts
 					break;
 			}
 
-			GameSubscriber.UpdateAsObservable()
-				.Select(_ => Score)
-				.DistinctUntilChanged()
+			this.ObserveEveryValueChanged(_ => Score)
 				.SubscribeToText(GetComponentInChildren<UnityEngine.UI.Text>(),
 					i => string.Format("Score: {0:#,0}", i))
 				.AddTo(this);

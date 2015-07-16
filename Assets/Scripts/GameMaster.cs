@@ -28,7 +28,7 @@ namespace Assets.Scripts
 
 		public static Mode GameMode { get; set; }
 
-		public GameMaster()
+		void Awake()
 		{
 			Current = this;
 		}
@@ -42,7 +42,7 @@ namespace Assets.Scripts
 				case Mode.UnityChan:
 					Instantiate(UnityChanCamera).transform.parent = Player.CurrentRigid.transform;
 					break;
-				default:
+				case Mode.God:
 					Instantiate(GodCamera).transform.parent = this.transform;
 					break;
 			}

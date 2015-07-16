@@ -48,6 +48,15 @@ namespace Assets.Scripts
 				.Subscribe(postureHistory.Add)
 				.AddTo(master);
 
+			this.FixedUpdateAsObservable()
+			    .Select(_ => new Posture(this.transform))
+			    .Buffer(40)
+				// ついでにスコアを加算
+				.Do(_ => GameMaster.Score += 1)
+			    .Select(x => x.ToObservable())
+			    .Select(x => x.Zip(this.FixedUpdateAsObservable(), (p, _) => p))
+				;
+
 			// trigger
 			var trigger = this.OnTriggerEnterAsObservable();
 
@@ -113,6 +122,12 @@ namespace Assets.Scripts
 				pos.ForTransform(t);
 				yield return new WaitForFixedUpdate();
 			}
+		}
+
+		static IEnumerator InstantiateEndOfFrame()
+		{
+			yield return new WaitForEndOfFrame();
+			throw new System.NotImplementedException();
 		}
 	}
 }

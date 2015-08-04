@@ -37,7 +37,6 @@ namespace Assets.Scripts
 
 			// ゲーム進行中のみ存在するオブジェクト
 			var master = GameMaster.Current;
-			var updateAsObservable = master.UpdateAsObservable();
 
 			// PostureHistory(位置のログ)の生成
 			this.FixedUpdateAsObservable()

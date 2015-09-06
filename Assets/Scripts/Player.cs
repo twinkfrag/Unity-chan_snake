@@ -69,7 +69,7 @@ namespace Assets.Scripts
 					c.gameObject.Destroy();
 
 					StopCoroutine(currentTailCoroutine);
-					gameObject.Parent().Add(TailPrefab);
+					gameObject.Parent().Add(TailPrefab).name = "Tail";
 					currentTailCoroutine = StartCoroutine(HistoryToTail(postureHistory));
 				})
 				.AddTo(master);
